@@ -1,0 +1,47 @@
+name: Integration tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  router-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: exchange-db
+        ports:
+          - 5000:5432
+        options: >-
+          --health-cmd "pg_isready -U root -d exchange-db"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:6.2-alpine
+        ports:
+          - 6380:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Run router integration tests
+        env:
+          DATABASE_URL: postgres://root:root@localhost:5000/exchange-db
+          REDIS_URL: redis://127.0.0.1:6380
+          API_KEY: test-integration-key
+        run: cargo test -p router --test integration -- --test-threads=1
