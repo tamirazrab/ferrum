@@ -1,0 +1,30 @@
+[package]
+name = "router"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+actix-cors.workspace = true
+actix-governor.workspace = true
+actix-web.workspace = true
+confik.workspace = true
+dotenvy.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+rust_decimal.workspace = true
+sqlx.workspace = true
+uuid.workspace = true
+
+redis = { path = "../redis" }
+sqlx_postgres = { path = "../sqlx_postgres" }
+db-processor = { path = "../db-processor" }
+
+[dev-dependencies]
+actix-rt = "2"
+engine = { path = "../engine" }
+fred.workspace = true
+reqwest = { version = "0.12", features = ["json"] }
+sqlx.workspace = true
+tokio.workspace = true
